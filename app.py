@@ -1,5 +1,4 @@
-from docx import Document
-from io import BytesIO
+
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -475,6 +474,8 @@ elif page == "Sector-wise Analysis":
 
 # ---------------- CONCLUSION ----------------
 elif page == "Conclusion":
+    from docx import Document
+    from io import BytesIO
 
     st.markdown("""
     <div class="glass-panel">
