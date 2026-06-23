@@ -340,35 +340,50 @@ elif page == "SIDBI Financial Trends":
     col1, col2 = st.columns(2)
 
     with col1:
-        fig = px.line(df, x="Year", y="SIDBI Credit", markers=True, title="SIDBI Credit Growth")
+        fig = px.line(
+            df,
+            x="Year",
+            y="SIDBI Credit",
+            markers=True,
+            title="SIDBI Credit Growth"
+        )
         fig.update_traces(line=dict(width=4))
         st.plotly_chart(chart_layout(fig), use_container_width=True)
 
     with col2:
-        fig = px.line(df, x="Year", y="Total Assets", markers=True, title="Total Assets Growth")
+        fig = px.line(
+            df,
+            x="Year",
+            y="Total Assets",
+            markers=True,
+            title="Total Assets Growth"
+        )
         fig.update_traces(line=dict(width=4))
         st.plotly_chart(chart_layout(fig), use_container_width=True)
 
     fig = px.line(
-    df,
-    x="Year",
-    y="Net Profit",
-    title="Net Profit Growth Trend (2010–2025)",
-    markers=True
-)
+        df,
+        x="Year",
+        y="Net Profit",
+        title="Net Profit Growth Trend (2010–2025)",
+        markers=True
+    )
 
-fig.update_traces(
-    line=dict(width=5, color="#8A2BE2"),
-    marker=dict(size=10)
-)
+    fig.update_traces(
+        line=dict(width=5, color="#8A2BE2"),
+        marker=dict(size=10)
+    )
 
-fig.update_layout(
-    xaxis_title="Year",
-    yaxis_title="Net Profit (₹ Cr)",
-    hovermode="x unified"
-)
+    fig.update_layout(
+        xaxis_title="Year",
+        yaxis_title="Net Profit (₹ Cr)",
+        hovermode="x unified"
+    )
 
-st.plotly_chart(chart_layout(fig), use_container_width=True)
+    st.plotly_chart(
+        chart_layout(fig),
+        use_container_width=True
+    )
 
 # ---------------- MSME INDICATORS ----------------
 elif page == "MSME Growth Indicators":
