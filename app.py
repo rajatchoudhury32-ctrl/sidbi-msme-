@@ -180,7 +180,7 @@ df = pd.DataFrame(data)
 
 
 # ---------------- SIDEBAR ----------------
-st.sidebar.image("sidbi_logo.png", width=190)
+st.sidebar.image("sidbi logo.jpg", width=190)
 
 st.sidebar.markdown("""
 <div class="sidebar-card">
