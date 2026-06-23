@@ -142,9 +142,36 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-st.sidebar.markdown("## 📊 SIDBI Dashboard")
-st.sidebar.markdown("---")
+# SIDBI Logo
+st.sidebar.image("sidbi logo.jpg", width=170)
 
+# Dashboard Card
+st.sidebar.markdown("""
+<div style="
+background:rgba(255,255,255,0.05);
+padding:12px;
+border-radius:12px;
+text-align:center;
+border:1px solid rgba(255,255,255,0.1);
+margin-bottom:15px;
+">
+<div style="
+font-size:20px;
+font-weight:700;
+color:white;
+">
+SIDBI Dashboard
+</div>
+
+<div style="
+font-size:12px;
+color:#B8C4D6;
+margin-top:5px;
+">
+MSME Analytics Platform
+</div>
+</div>
+""", unsafe_allow_html=True)
 page = st.sidebar.radio(
     "NAVIGATION",
     [
