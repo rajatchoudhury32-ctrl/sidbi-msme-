@@ -229,6 +229,7 @@ page = st.sidebar.radio(
         "Scheme Analysis",
         "State-wise Analysis",
         "Sector-wise Analysis",
+        "India Map",
         "Forecasting",
         "Recommendations",
         "Data Sources",
@@ -601,6 +602,78 @@ elif page == "Sector-wise Analysis":
             title="Sector-wise Distribution"
         )
         st.plotly_chart(chart_layout(fig), use_container_width=True)
+
+# ---------------- INDIA MAP ----------------
+elif page == "India Map":
+
+    import requests
+
+    st.markdown("## 🗺️ India State-wise MSME Credit Map")
+
+    state_df = pd.DataFrame({
+        "State": [
+            "Maharashtra", "Uttar Pradesh", "Tamil Nadu", "Gujarat",
+            "Karnataka", "Rajasthan", "West Bengal", "Madhya Pradesh",
+            "Andhra Pradesh", "Telangana", "Kerala", "Punjab",
+            "Haryana", "Bihar", "Odisha"
+        ],
+        "Credit Absorption": [
+            98, 85, 90, 70, 65, 45, 42, 40,
+            38, 36, 32, 30, 28, 25, 22
+        ],
+        "MSME Registrations": [
+            120, 105, 95, 75, 68, 55, 50, 48,
+            44, 42, 39, 35, 34, 30, 28
+        ]
+    })
+
+    metric = st.selectbox(
+        "Select Map Indicator",
+        ["Credit Absorption", "MSME Registrations"]
+    )
+
+    geojson_url = "https://raw.githubusercontent.com/geohacker/india/master/state/india_telengana.geojson"
+    india_states = requests.get(geojson_url).json()
+
+    fig = px.choropleth(
+        state_df,
+        geojson=india_states,
+        featureidkey="properties.NAME_1",
+        locations="State",
+        color=metric,
+        color_continuous_scale="Viridis",
+        title=f"India State-wise {metric}",
+        hover_name="State",
+        hover_data={
+            "Credit Absorption": True,
+            "MSME Registrations": True
+        }
+    )
+
+    fig.update_geos(
+        fitbounds="locations",
+        visible=False
+    )
+
+    fig.update_layout(
+        template="plotly_dark",
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        font=dict(color="white"),
+        title_font=dict(size=24, color="white"),
+        margin=dict(l=20, r=20, t=60, b=20)
+    )
+
+    st.plotly_chart(fig, use_container_width=True)
+
+    insight_box(
+        "🗺️ State-wise Map Insights",
+        [
+            "Maharashtra, Tamil Nadu and Uttar Pradesh show strong MSME activity.",
+            "Credit absorption is concentrated in industrially active states.",
+            "Digital formalisation has improved MSME visibility across states."
+        ]
+    )
 
 # ---------------- FORECASTING ----------------
 elif page == "Forecasting":
