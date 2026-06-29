@@ -163,6 +163,11 @@ st.markdown("""
     color: #00D9FF;
     text-align: center;
 }
+
+[data-testid="stDataFrame"] {
+    background-color: white;
+    border-radius: 14px;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -202,6 +207,14 @@ data = {
 }
 
 df = pd.DataFrame(data)
+
+# Lighter professional chart colors for better label visibility
+SIDBI_BLUE = "#0077B6"
+SIDBI_CYAN = "#00B4D8"
+SIDBI_GREEN = "#2A9D8F"
+SIDBI_PURPLE = "#7B61FF"
+SIDBI_ORANGE = "#F4A261"
+SIDBI_YELLOW = "#E9C46A"
 
 # ---------------- SIDEBAR ----------------
 logo_path = "sidbi logo.jpg"
@@ -275,13 +288,27 @@ st.markdown("---")
 # ---------------- FUNCTIONS ----------------
 def chart_layout(fig):
     fig.update_layout(
-        template="plotly_dark",
-        paper_bgcolor="rgba(0,0,0,0)",
-        plot_bgcolor="rgba(0,0,0,0)",
-        font=dict(color="white"),
-        title_font=dict(size=22, color="white"),
-        margin=dict(l=20, r=20, t=60, b=20),
-        hovermode="x unified"
+        template="plotly_white",
+        paper_bgcolor="rgba(255,255,255,0.96)",
+        plot_bgcolor="rgba(255,255,255,0.96)",
+        font=dict(color="#102A43", size=14),
+        title_font=dict(size=22, color="#0B1F3A"),
+        margin=dict(l=30, r=30, t=70, b=40),
+        hovermode="x unified",
+        xaxis=dict(
+            title_font=dict(color="#102A43"),
+            tickfont=dict(color="#102A43"),
+            gridcolor="rgba(16,42,67,0.12)"
+        ),
+        yaxis=dict(
+            title_font=dict(color="#102A43"),
+            tickfont=dict(color="#102A43"),
+            gridcolor="rgba(16,42,67,0.12)"
+        ),
+        legend=dict(
+            font=dict(color="#102A43"),
+            bgcolor="rgba(255,255,255,0.7)"
+        )
     )
     return fig
 
@@ -295,8 +322,28 @@ def insight_box(title, points):
     </div>
     """, unsafe_allow_html=True)
 
+
+def selected_range_box(page_name, start_year, end_year):
+    st.markdown(f"""
+    <div style="
+        background:rgba(255,255,255,0.94);
+        color:#102A43;
+        padding:16px 22px;
+        border-radius:14px;
+        border-left:6px solid #0077B6;
+        margin-bottom:20px;
+        font-size:17px;
+        font-weight:700;
+        box-shadow:0 6px 20px rgba(0,0,0,0.18);
+    ">
+        📌 Current Analysis: {page_name} &nbsp; | &nbsp; Selected Range: {start_year} – {end_year}
+    </div>
+    """, unsafe_allow_html=True)
+
 # ---------------- HOME ----------------
 if page == "Home":
+
+    selected_range_box("Home", selected_years[0], selected_years[1])
 
     k1, k2, k3, k4, k5 = st.columns(5)
 
@@ -359,7 +406,7 @@ if page == "Home":
         markers=True,
         title="SIDBI Credit Trend"
     )
-    fig.update_traces(line=dict(width=5, color="#00D9FF"), marker=dict(size=9))
+    fig.update_traces(line=dict(width=5, color=SIDBI_BLUE), marker=dict(size=9))
     st.plotly_chart(chart_layout(fig), use_container_width=True)
 
     left, right = st.columns([1, 1])
@@ -404,6 +451,8 @@ if page == "Home":
 # ---------------- FINANCIAL TRENDS ----------------
 elif page == "SIDBI Financial Trends":
 
+    selected_range_box("SIDBI Financial Trends", selected_years[0], selected_years[1])
+
     col1, col2 = st.columns(2)
 
     with col1:
@@ -414,7 +463,7 @@ elif page == "SIDBI Financial Trends":
             markers=True,
             title="SIDBI Credit Growth"
         )
-        fig.update_traces(line=dict(width=5, color="#00D9FF"))
+        fig.update_traces(line=dict(width=5, color=SIDBI_BLUE))
         st.plotly_chart(chart_layout(fig), use_container_width=True)
 
     with col2:
@@ -433,12 +482,14 @@ elif page == "SIDBI Financial Trends":
         title="Net Profit Growth Trend",
         markers=True
     )
-    fig.update_traces(line=dict(width=5, color="#8A2BE2"), marker=dict(size=10))
+    fig.update_traces(line=dict(width=5, color=SIDBI_PURPLE), marker=dict(size=10))
     fig.update_layout(yaxis_title="Net Profit (₹ Cr)")
     st.plotly_chart(chart_layout(fig), use_container_width=True)
 
 # ---------------- MSME INDICATORS ----------------
 elif page == "MSME Growth Indicators":
+
+    selected_range_box("MSME Growth Indicators", selected_years[0], selected_years[1])
 
     col1, col2 = st.columns(2)
 
@@ -459,7 +510,7 @@ elif page == "MSME Growth Indicators":
             markers=True,
             title="Employment Trend"
         )
-        fig.update_traces(line=dict(width=5, color="#00B875"))
+        fig.update_traces(line=dict(width=5, color=SIDBI_GREEN))
         st.plotly_chart(chart_layout(fig), use_container_width=True)
 
     fig = px.line(
@@ -469,11 +520,13 @@ elif page == "MSME Growth Indicators":
         markers=True,
         title="MSME GDP Contribution (%)"
     )
-    fig.update_traces(line=dict(width=5, color="#FFB000"))
+    fig.update_traces(line=dict(width=5, color=SIDBI_ORANGE))
     st.plotly_chart(chart_layout(fig), use_container_width=True)
 
 # ---------------- GROWTH ANALYSIS ----------------
 elif page == "Growth Analysis":
+
+    selected_range_box("Growth Analysis", selected_years[0], selected_years[1])
 
     growth_df = filtered_df.copy()
     growth_df["Credit Growth %"] = growth_df["SIDBI Credit"].pct_change() * 100
@@ -502,6 +555,8 @@ elif page == "Growth Analysis":
 # ---------------- CORRELATION ----------------
 elif page == "Correlation Heatmap":
 
+    selected_range_box("Correlation Heatmap", selected_years[0], selected_years[1])
+
     corr = filtered_df.drop(columns=["Year"]).corr()
 
     fig = go.Figure(
@@ -509,7 +564,7 @@ elif page == "Correlation Heatmap":
             z=corr.values,
             x=corr.columns,
             y=corr.columns,
-            colorscale="Viridis",
+            colorscale="YlGnBu",
             text=corr.round(2).values,
             texttemplate="%{text}",
             hoverongaps=False
@@ -523,6 +578,8 @@ elif page == "Correlation Heatmap":
 
 # ---------------- SCHEME ANALYSIS ----------------
 elif page == "Scheme Analysis":
+
+    selected_range_box("Scheme Analysis", selected_years[0], selected_years[1])
 
     scheme_df = pd.DataFrame({
         "Scheme": ["Direct Finance", "Institutional Finance", "Refinance", "Startup Support", "Cluster Development"],
@@ -557,6 +614,8 @@ elif page == "Scheme Analysis":
 # ---------------- STATE ANALYSIS ----------------
 elif page == "State-wise Analysis":
 
+    selected_range_box("State-wise Analysis", selected_years[0], selected_years[1])
+
     state_df = pd.DataFrame({
         "State": ["Maharashtra", "Uttar Pradesh", "Tamil Nadu", "Gujarat", "Karnataka", "Rajasthan", "West Bengal"],
         "MSME Registrations": [120, 105, 95, 75, 68, 55, 50],
@@ -576,6 +635,8 @@ elif page == "State-wise Analysis":
 
 # ---------------- SECTOR ANALYSIS ----------------
 elif page == "Sector-wise Analysis":
+
+    selected_range_box("Sector-wise Analysis", selected_years[0], selected_years[1])
 
     sector_df = pd.DataFrame({
         "Sector": ["Manufacturing", "Services", "Trading"],
@@ -605,6 +666,8 @@ elif page == "Sector-wise Analysis":
 
 # ---------------- INDIA MAP ----------------
 elif page == "India Map":
+
+    selected_range_box("India Map", selected_years[0], selected_years[1])
 
     import requests
 
@@ -641,7 +704,7 @@ elif page == "India Map":
         featureidkey="properties.NAME_1",
         locations="State",
         color=metric,
-        color_continuous_scale="Viridis",
+        color_continuous_scale="YlGnBu",
         title=f"India State-wise {metric}",
         hover_name="State",
         hover_data={
@@ -656,12 +719,16 @@ elif page == "India Map":
     )
 
     fig.update_layout(
-        template="plotly_dark",
-        paper_bgcolor="rgba(0,0,0,0)",
-        plot_bgcolor="rgba(0,0,0,0)",
-        font=dict(color="white"),
-        title_font=dict(size=24, color="white"),
-        margin=dict(l=20, r=20, t=60, b=20)
+        template="plotly_white",
+        paper_bgcolor="rgba(255,255,255,0.96)",
+        plot_bgcolor="rgba(255,255,255,0.96)",
+        font=dict(color="#102A43", size=14),
+        title_font=dict(size=24, color="#0B1F3A"),
+        margin=dict(l=30, r=30, t=70, b=40),
+        coloraxis_colorbar=dict(
+            title=dict(font=dict(color="#102A43")),
+            tickfont=dict(color="#102A43")
+        )
     )
 
     st.plotly_chart(fig, use_container_width=True)
@@ -677,6 +744,8 @@ elif page == "India Map":
 
 # ---------------- FORECASTING ----------------
 elif page == "Forecasting":
+
+    selected_range_box("Forecasting", selected_years[0], selected_years[1])
 
     st.markdown("## 🔮 Forecasting Analysis 2026–2030")
 
