@@ -323,7 +323,10 @@ def insight_box(title, points):
     """, unsafe_allow_html=True)
 
 
-def selected_range_box(page_name, start_year, end_year):
+def selected_range_box(page_name):
+    start_year = selected_years[0]
+    end_year = selected_years[1]
+
     st.markdown(f"""
     <div style="
         background:rgba(255,255,255,0.94);
@@ -343,11 +346,11 @@ def selected_range_box(page_name, start_year, end_year):
 # ---------------- HOME ----------------
 if page == "Home":
 
-    selected_range_box("Home", selected_years[0], selected_years[1])
+    selected_range_box("Home")
 
     k1, k2, k3, k4, k5 = st.columns(5)
 
-    k1.metric("Years Covered", "2010–2025")
+    k1.metric("Selected Range", f"{selected_years[0]}–{selected_years[1]}")
     k2.metric("Indicators", "16+")
     k3.metric("States/UTs", "36")
     k4.metric("Schemes", "15")
@@ -451,7 +454,7 @@ if page == "Home":
 # ---------------- FINANCIAL TRENDS ----------------
 elif page == "SIDBI Financial Trends":
 
-    selected_range_box("SIDBI Financial Trends", selected_years[0], selected_years[1])
+    selected_range_box("SIDBI Financial Trends")
 
     col1, col2 = st.columns(2)
 
@@ -489,7 +492,7 @@ elif page == "SIDBI Financial Trends":
 # ---------------- MSME INDICATORS ----------------
 elif page == "MSME Growth Indicators":
 
-    selected_range_box("MSME Growth Indicators", selected_years[0], selected_years[1])
+    selected_range_box("MSME Growth Indicators")
 
     col1, col2 = st.columns(2)
 
@@ -526,7 +529,7 @@ elif page == "MSME Growth Indicators":
 # ---------------- GROWTH ANALYSIS ----------------
 elif page == "Growth Analysis":
 
-    selected_range_box("Growth Analysis", selected_years[0], selected_years[1])
+    selected_range_box("Growth Analysis")
 
     growth_df = filtered_df.copy()
     growth_df["Credit Growth %"] = growth_df["SIDBI Credit"].pct_change() * 100
@@ -555,7 +558,7 @@ elif page == "Growth Analysis":
 # ---------------- CORRELATION ----------------
 elif page == "Correlation Heatmap":
 
-    selected_range_box("Correlation Heatmap", selected_years[0], selected_years[1])
+    selected_range_box("Correlation Heatmap")
 
     corr = filtered_df.drop(columns=["Year"]).corr()
 
@@ -579,7 +582,7 @@ elif page == "Correlation Heatmap":
 # ---------------- SCHEME ANALYSIS ----------------
 elif page == "Scheme Analysis":
 
-    selected_range_box("Scheme Analysis", selected_years[0], selected_years[1])
+    selected_range_box("Scheme Analysis")
 
     scheme_df = pd.DataFrame({
         "Scheme": ["Direct Finance", "Institutional Finance", "Refinance", "Startup Support", "Cluster Development"],
@@ -614,7 +617,7 @@ elif page == "Scheme Analysis":
 # ---------------- STATE ANALYSIS ----------------
 elif page == "State-wise Analysis":
 
-    selected_range_box("State-wise Analysis", selected_years[0], selected_years[1])
+    selected_range_box("State-wise Analysis")
 
     state_df = pd.DataFrame({
         "State": ["Maharashtra", "Uttar Pradesh", "Tamil Nadu", "Gujarat", "Karnataka", "Rajasthan", "West Bengal"],
@@ -636,7 +639,7 @@ elif page == "State-wise Analysis":
 # ---------------- SECTOR ANALYSIS ----------------
 elif page == "Sector-wise Analysis":
 
-    selected_range_box("Sector-wise Analysis", selected_years[0], selected_years[1])
+    selected_range_box("Sector-wise Analysis")
 
     sector_df = pd.DataFrame({
         "Sector": ["Manufacturing", "Services", "Trading"],
@@ -667,7 +670,7 @@ elif page == "Sector-wise Analysis":
 # ---------------- INDIA MAP ----------------
 elif page == "India Map":
 
-    selected_range_box("India Map", selected_years[0], selected_years[1])
+    selected_range_box("India Map")
 
     import requests
 
@@ -745,7 +748,7 @@ elif page == "India Map":
 # ---------------- FORECASTING ----------------
 elif page == "Forecasting":
 
-    selected_range_box("Forecasting", selected_years[0], selected_years[1])
+    selected_range_box("Forecasting")
 
     st.markdown("## 🔮 Forecasting Analysis 2026–2030")
 
@@ -787,6 +790,8 @@ elif page == "Forecasting":
 # ---------------- RECOMMENDATIONS ----------------
 elif page == "Recommendations":
 
+    selected_range_box("Recommendations")
+
     st.markdown("## 📌 Key Recommendations")
 
     st.markdown("""
@@ -804,6 +809,8 @@ elif page == "Recommendations":
 
 # ---------------- DATA SOURCES ----------------
 elif page == "Data Sources":
+
+    selected_range_box("Data Sources")
 
     st.markdown("## 📚 Data Sources")
 
@@ -853,6 +860,8 @@ elif page == "Data Sources":
 
 # ---------------- CONCLUSION ----------------
 elif page == "Conclusion":
+
+    selected_range_box("Conclusion")
 
     from docx import Document
     from io import BytesIO
