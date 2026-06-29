@@ -659,33 +659,55 @@ elif page == "Recommendations":
     </div>
     """, unsafe_allow_html=True)
 
+
 # ---------------- DATA SOURCES ----------------
 elif page == "Data Sources":
 
     st.markdown("## 📚 Data Sources")
 
     sources_df = pd.DataFrame({
-        "Source": [
+        "Source Name": [
             "SIDBI Annual Reports",
-            "Ministry of MSME",
-            "Udyam Registration Portal",
-            "RBI Reports",
-            "NSO / MoSPI",
-            "World Bank Open Data"
+            "SIDBI MSME Pulse",
+            "Ministry of MSME Annual Reports",
+            "MSME Dashboard / Udyam Registration",
+            "MSME Dashboard Credit Facilitation",
+            "Reserve Bank of India",
+            "MOSPI",
+            "Economic Survey of India",
+            "GST Council / Ministry of Finance"
         ],
-        "Purpose": [
-            "SIDBI credit, assets and profit figures",
-            "MSME sector contribution and policy context",
-            "MSME registration and formalization trends",
-            "Credit and banking indicators",
-            "GDP and employment indicators",
-            "Macroeconomic comparison indicators"
+        "Use In Workbook": [
+            "SIDBI credit, total assets, profit, scheme-level credit",
+            "MSME credit ecosystem and sectoral lending context",
+            "MSME registrations, employment, GDP/export contribution",
+            "Registration, employment, formalisation, state/activity details",
+            "Linked MSME credit facilitation / sectoral credit reference",
+            "Repo rate, credit deployment, monetary policy and financial indicators",
+            "GDP growth, CPI inflation, national accounts references",
+            "Macroeconomic indicators and MSME policy/economic context",
+            "GST rollout and GST-related policy timeline"
+        ],
+        "Official URL": [
+            "https://www.sidbi.in/",
+            "https://www.sidbi.in/msme-pulse",
+            "https://msme.gov.in/msme-annual-report-english-2024-25",
+            "https://dashboard.msme.gov.in/",
+            "https://dashboard.msme.gov.in/rbi_credit.aspx",
+            "https://www.rbi.org.in/",
+            "https://www.mospi.gov.in/",
+            "https://www.indiabudget.gov.in/economicsurvey/",
+            "https://gstcouncil.gov.in/"
         ]
     })
 
-    st.dataframe(sources_df, use_container_width=True)
+    st.dataframe(
+        sources_df,
+        use_container_width=True,
+        hide_index=True
+    )
 
-    st.info("This page improves transparency by clearly showing the data sources used for dashboard preparation.")
+    st.info("These official sources support the financial, MSME, macroeconomic, state-wise and policy indicators used in the dashboard.")
 
 # ---------------- CONCLUSION ----------------
 elif page == "Conclusion":
