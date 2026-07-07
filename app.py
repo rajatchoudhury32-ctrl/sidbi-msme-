@@ -9,6 +9,30 @@ st.set_page_config(
     page_icon="📊",
     layout="wide"
 )
+st.markdown("""
+<style>
+/* Hide Streamlit top toolbar */
+[data-testid="stToolbar"] {
+    display: none !important;
+}
+
+/* Hide deploy/share button area */
+[data-testid="stDecoration"] {
+    display: none !important;
+}
+
+/* Hide header */
+header {
+    visibility: hidden !important;
+    height: 0px !important;
+}
+
+/* Remove top padding after hiding header */
+.block-container {
+    padding-top: 1rem !important;
+}
+</style>
+""", unsafe_allow_html=True)
 
 # ---------------- CSS THEME ----------------
 st.markdown("""
