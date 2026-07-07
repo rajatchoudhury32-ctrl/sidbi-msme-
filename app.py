@@ -37,83 +37,107 @@ header {
 # ---------------- CSS THEME ----------------
 st.markdown("""
 <style>
-.stApp {
-    background: linear-gradient(135deg, #020617 0%, #061A35 45%, #090B1F 100%);
-    color: white;
+
+/* Hide Streamlit Toolbar */
+[data-testid="stToolbar"] {
+    display: none !important;
 }
 
+[data-testid="stDecoration"] {
+    display: none !important;
+}
+
+header {
+    visibility: hidden !important;
+    height: 0px !important;
+}
+
+/* Main App */
+.stApp {
+    background: #F5F7FA;
+    color: #1E293B;
+}
+
+/* Sidebar */
 [data-testid="stSidebar"] {
-    background: linear-gradient(180deg, #061A35 0%, #020617 100%);
+    background: #FFFFFF;
+    border-right: 2px solid #E2E8F0;
 }
 
 [data-testid="stSidebar"] * {
-    color: white;
+    color: #1E293B;
 }
 
+/* Main Container */
 .block-container {
     padding-top: 2rem;
     padding-bottom: 2rem;
 }
 
+/* Sidebar Card */
 .sidebar-card {
-    background: rgba(255,255,255,0.06);
+    background: #FFFFFF;
     padding: 14px;
     border-radius: 14px;
     text-align: center;
-    border: 1px solid rgba(255,255,255,0.15);
+    border: 1px solid #D6E4F0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     margin-bottom: 20px;
 }
 
+/* Titles */
 .main-title {
     font-size: 34px;
     font-weight: 850;
-    color: #ffffff;
+    color: #0F172A;
     margin-bottom: 6px;
 }
 
 .sub-title {
     font-size: 17px;
-    color: #B8C4D6;
+    color: #64748B;
 }
 
+/* Period Card */
 .period-card {
-    background: rgba(0, 95, 120, 0.25);
-    border: 1px solid rgba(0, 217, 255, 0.45);
-    color: #4DFFB8;
+    background: #E0F2FE;
+    border: 1px solid #38BDF8;
+    color: #0C4A6E;
     padding: 16px;
     border-radius: 14px;
     text-align: center;
     font-weight: 700;
 }
 
+/* Metric Cards */
 .metric-card {
     padding: 26px;
     border-radius: 20px;
     color: white;
     min-height: 190px;
-    box-shadow: 0 12px 35px rgba(0,0,0,0.45);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.18);
     transition: 0.3s ease;
 }
 
 .metric-card:hover {
     transform: translateY(-6px);
-    box-shadow: 0 16px 45px rgba(0,217,255,0.25);
+    box-shadow: 0 14px 30px rgba(37,99,235,0.25);
 }
 
 .blue-card {
-    background: linear-gradient(135deg, #005BEA, #001E72);
+    background: linear-gradient(135deg,#2563EB,#1D4ED8);
 }
 
 .green-card {
-    background: linear-gradient(135deg, #00B875, #006B58);
+    background: linear-gradient(135deg,#10B981,#059669);
 }
 
 .purple-card {
-    background: linear-gradient(135deg, #7B2FF7, #2C0B59);
+    background: linear-gradient(135deg,#8B5CF6,#6D28D9);
 }
 
 .orange-card {
-    background: linear-gradient(135deg, #FF8C00, #A33D00);
+    background: linear-gradient(135deg,#F59E0B,#D97706);
 }
 
 .metric-title {
@@ -129,43 +153,46 @@ st.markdown("""
 
 .metric-growth {
     font-size: 22px;
-    color: #77FF9B;
+    color: #DCFCE7;
     font-weight: 800;
     margin-top: 22px;
 }
 
+/* Panels */
 .glass-panel {
-    background: rgba(7, 25, 55, 0.78);
-    border: 1px solid rgba(0, 150, 255, 0.55);
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
     border-radius: 20px;
     padding: 28px;
-    box-shadow: 0 10px 35px rgba(0,0,0,0.35);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
 }
 
 .purple-panel {
-    background: rgba(24, 10, 55, 0.82);
-    border: 1px solid rgba(145, 70, 255, 0.65);
+    background: #FFFFFF;
+    border: 1px solid #DDD6FE;
     border-radius: 20px;
     padding: 28px;
-    box-shadow: 0 10px 35px rgba(0,0,0,0.35);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
 }
 
 .panel-title {
     font-size: 24px;
     font-weight: 800;
     margin-bottom: 18px;
+    color: #0F172A;
 }
 
 .insight {
     padding: 14px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.14);
+    border-bottom: 1px solid #E2E8F0;
     font-size: 16px;
-    color: #F2F5FA;
+    color: #334155;
 }
 
+/* Small Cards */
 .small-card {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(100,180,255,0.35);
+    background: #F8FAFC;
+    border: 1px solid #CBD5E1;
     padding: 18px;
     border-radius: 15px;
     text-align: center;
@@ -174,24 +201,42 @@ st.markdown("""
 .small-num {
     font-size: 25px;
     font-weight: 850;
-    color: white;
+    color: #2563EB;
 }
 
+/* Footer */
 .footer {
     margin-top: 28px;
     padding: 24px;
-    background: rgba(0, 45, 95, 0.6);
+    background: #2563EB;
     border-radius: 16px;
     font-size: 20px;
     font-weight: 800;
-    color: #00D9FF;
+    color: white;
     text-align: center;
 }
 
+/* Dataframe */
 [data-testid="stDataFrame"] {
     background-color: white;
+    border: 1px solid #CBD5E1;
     border-radius: 14px;
 }
+
+/* Buttons */
+.stButton>button {
+    background: #2563EB;
+    color: white;
+    border-radius: 10px;
+    border: none;
+    font-weight: 700;
+}
+
+.stButton>button:hover {
+    background: #1D4ED8;
+    color: white;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
