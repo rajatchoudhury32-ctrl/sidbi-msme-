@@ -7,7 +7,9 @@ import plotly.graph_objects as go
 st.set_page_config(
     page_title="SIDBI MSME Dashboard",
     page_icon="📊",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="expanded"
+
 )
 # ---------------- CSS THEME ----------------
 st.markdown("""
@@ -18,13 +20,30 @@ st.markdown("""
     display: none !important;
 }
 
+/* Hide top decoration */
 [data-testid="stDecoration"] {
     display: none !important;
 }
 
-header {
-    visibility: hidden !important;
-    height: 0px !important;
+/* Keep header visible so sidebar toggle works */
+header[data-testid="stHeader"] {
+    background: transparent !important;
+    height: 3rem !important;
+    visibility: visible !important;
+}
+
+/* Sidebar collapse button */
+[data-testid="stSidebarCollapseButton"] {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Sidebar open button when collapsed */
+[data-testid="collapsedControl"] {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
 
 /* Main App */
