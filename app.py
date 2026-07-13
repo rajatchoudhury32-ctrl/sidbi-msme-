@@ -791,11 +791,59 @@ elif page == "India Map":
     st.markdown("## 🗺️ India State-wise MSME Credit Map")
 
     state_df = pd.DataFrame({
-        "State": [
-            "Maharashtra", "Uttar Pradesh", "Tamil Nadu", "Gujarat",
-            "Karnataka", "Rajasthan", "West Bengal", "Madhya Pradesh",
-            "Andhra Pradesh", "Telangana", "Kerala", "Punjab",
-            "Haryana", "Bihar", "Odisha"
+    "State": [
+        "Andhra Pradesh",
+        "Arunachal Pradesh",
+        "Assam",
+        "Bihar",
+        "Chhattisgarh",
+        "Goa",
+        "Gujarat",
+        "Haryana",
+        "Himachal Pradesh",
+        "Jharkhand",
+        "Karnataka",
+        "Kerala",
+        "Madhya Pradesh",
+        "Maharashtra",
+        "Manipur",
+        "Meghalaya",
+        "Mizoram",
+        "Nagaland",
+        "Odisha",
+        "Punjab",
+        "Rajasthan",
+        "Sikkim",
+        "Tamil Nadu",
+        "Telangana",
+        "Tripura",
+        "Uttar Pradesh",
+        "Uttarakhand",
+        "West Bengal",
+        "Andaman and Nicobar Islands",
+        "Chandigarh",
+        "Dadra and Nagar Haveli and Daman and Diu",
+        "Delhi",
+        "Jammu and Kashmir",
+        "Ladakh",
+        "Lakshadweep",
+        "Puducherry"
+    ],
+
+    "Credit Absorption": [
+        38,12,22,25,20,10,70,28,15,24,
+        65,32,40,98,14,11,8,9,22,30,
+        45,6,90,36,7,85,18,42,5,9,
+        8,34,20,3,2,12
+    ],
+
+    "MSME Registrations": [
+        44,10,26,30,22,12,75,34,16,28,
+        68,39,48,120,15,12,9,10,28,35,
+        55,7,95,42,8,105,22,50,6,10,
+        9,40,24,4,3,15
+    ]
+})
         ],
         "Credit Absorption": [
             98, 85, 90, 70, 65, 45, 42, 40,
@@ -812,13 +860,12 @@ elif page == "India Map":
         ["Credit Absorption", "MSME Registrations"]
     )
 
-    geojson_url = "https://raw.githubusercontent.com/geohacker/india/master/state/india_telengana.geojson"
-    india_states = requests.get(geojson_url).json()
-
+   geojson_url = "https://raw.githubusercontent.com/plotly/datasets/master/india_states.geojson"
+india_states = requests.get(geojson_url).json()
     fig = px.choropleth(
         state_df,
         geojson=india_states,
-        featureidkey="properties.NAME_1",
+        featureidkey="properties.ST_NM",
         locations="State",
         color=metric,
         color_continuous_scale="YlGnBu",
@@ -830,9 +877,15 @@ elif page == "India Map":
         }
     )
 
-    fig.update_geos(
-        fitbounds="locations",
-        visible=False
+   fig.update_geos(
+    fitbounds="locations",
+    visible=False,
+    showcountries=True,
+    countrycolor="black",
+    showsubunits=True,
+    subunitcolor="white",
+    projection_type="mercator"
+
     )
 
     fig.update_layout(
