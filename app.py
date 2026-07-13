@@ -487,7 +487,7 @@ if page == "Home":
         st.markdown("""
 <div class="glass-panel">
     <div class="panel-title">📊 Dashboard Overview</div>
-    <p style="font-size:16px;line-height:1.8;color:#334155;">
+    <p style="font-size:16px;line-height:1.8;color:#1E293B;">
     This dashboard analyzes SIDBI credit trends, asset growth, profitability,
     MSME registrations, employment, GDP contribution, state-wise performance,
     sector-wise allocation and correlation insights.
