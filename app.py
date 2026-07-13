@@ -7,89 +7,144 @@ import plotly.graph_objects as go
 st.set_page_config(
     page_title="SIDBI MSME Dashboard",
     page_icon="📊",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
 
 # ---------------- CSS THEME ----------------
 st.markdown("""
 <style>
-.stApp {
-    background: linear-gradient(135deg, #020617 0%, #061A35 45%, #090B1F 100%);
-    color: white;
+
+/* Keep Streamlit header and sidebar controls available */
+header[data-testid="stHeader"] {
+    display: block !important;
+    visibility: visible !important;
+    height: 3.5rem !important;
+    background: rgba(255, 255, 255, 0.96) !important;
+    border-bottom: 1px solid #E2E8F0 !important;
 }
 
+/* Sidebar collapse button */
+button[data-testid="stSidebarCollapseButton"],
+[data-testid="stSidebarCollapseButton"] button {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Sidebar reopen button after collapse */
+[data-testid="stSidebarCollapsedControl"],
+[data-testid="collapsedControl"] {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    z-index: 999999 !important;
+}
+
+/* Main App */
+.stApp {
+    background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 55%, #EEF2F7 100%);
+    color: #1E293B;
+}
+
+/* General text */
+.stApp p,
+.stApp label,
+.stApp span,
+.stApp div {
+    color: #1E293B;
+}
+
+/* Sidebar */
 [data-testid="stSidebar"] {
-    background: linear-gradient(180deg, #061A35 0%, #020617 100%);
+    background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
+    border-right: 1px solid #DCE3EC;
 }
 
 [data-testid="stSidebar"] * {
-    color: white;
+    color: #1E293B;
 }
 
+/* Sidebar radio labels */
+[data-testid="stSidebar"] label {
+    color: #1E293B !important;
+}
+
+/* Main Container */
 .block-container {
     padding-top: 2rem;
     padding-bottom: 2rem;
 }
 
+/* Sidebar Card */
 .sidebar-card {
-    background: rgba(255,255,255,0.06);
+    background: #FFFFFF;
     padding: 14px;
     border-radius: 14px;
     text-align: center;
-    border: 1px solid rgba(255,255,255,0.15);
+    border: 1px solid #D6E4F0;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
     margin-bottom: 20px;
 }
 
+/* Titles */
 .main-title {
     font-size: 34px;
     font-weight: 850;
-    color: #ffffff;
+    color: #0F172A;
     margin-bottom: 6px;
 }
 
 .sub-title {
     font-size: 17px;
-    color: #B8C4D6;
+    color: #64748B;
 }
 
+/* Period Card */
 .period-card {
-    background: rgba(0, 95, 120, 0.25);
-    border: 1px solid rgba(0, 217, 255, 0.45);
-    color: #4DFFB8;
+    background: #E0F2FE;
+    border: 1px solid #38BDF8;
+    color: #0C4A6E;
     padding: 16px;
     border-radius: 14px;
     text-align: center;
     font-weight: 700;
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.12);
 }
 
+/* Metric Cards */
 .metric-card {
     padding: 26px;
     border-radius: 20px;
-    color: white;
+    color: white !important;
     min-height: 190px;
-    box-shadow: 0 12px 35px rgba(0,0,0,0.45);
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.14);
     transition: 0.3s ease;
+}
+
+.metric-card * {
+    color: white !important;
 }
 
 .metric-card:hover {
     transform: translateY(-6px);
-    box-shadow: 0 16px 45px rgba(0,217,255,0.25);
+    box-shadow: 0 14px 30px rgba(37, 99, 235, 0.22);
 }
 
 .blue-card {
-    background: linear-gradient(135deg, #005BEA, #001E72);
+    background: linear-gradient(135deg, #2563EB, #1D4ED8);
 }
 
 .green-card {
-    background: linear-gradient(135deg, #00B875, #006B58);
+    background: linear-gradient(135deg, #10B981, #059669);
 }
 
 .purple-card {
-    background: linear-gradient(135deg, #7B2FF7, #2C0B59);
+    background: linear-gradient(135deg, #8B5CF6, #6D28D9);
 }
 
 .orange-card {
-    background: linear-gradient(135deg, #FF8C00, #A33D00);
+    background: linear-gradient(135deg, #F59E0B, #D97706);
 }
 
 .metric-title {
@@ -105,43 +160,50 @@ st.markdown("""
 
 .metric-growth {
     font-size: 22px;
-    color: #77FF9B;
+    color: #DCFCE7 !important;
     font-weight: 800;
     margin-top: 22px;
 }
 
-.glass-panel {
-    background: rgba(7, 25, 55, 0.78);
-    border: 1px solid rgba(0, 150, 255, 0.55);
+/* Panels */
+.glass-panel,
+.purple-panel {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
     border-radius: 20px;
     padding: 28px;
-    box-shadow: 0 10px 35px rgba(0,0,0,0.35);
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
 }
 
 .purple-panel {
-    background: rgba(24, 10, 55, 0.82);
-    border: 1px solid rgba(145, 70, 255, 0.65);
-    border-radius: 20px;
-    padding: 28px;
-    box-shadow: 0 10px 35px rgba(0,0,0,0.35);
+    border-color: #DDD6FE;
+}
+
+.glass-panel p,
+.glass-panel div,
+.purple-panel p,
+.purple-panel div {
+    color: #334155;
 }
 
 .panel-title {
     font-size: 24px;
     font-weight: 800;
     margin-bottom: 18px;
+    color: #0F172A !important;
 }
 
 .insight {
     padding: 14px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.14);
+    border-bottom: 1px solid #E2E8F0;
     font-size: 16px;
-    color: #F2F5FA;
+    color: #334155 !important;
 }
 
+/* Small Cards */
 .small-card {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(100,180,255,0.35);
+    background: #F8FAFC;
+    border: 1px solid #CBD5E1;
     padding: 18px;
     border-radius: 15px;
     text-align: center;
@@ -150,24 +212,76 @@ st.markdown("""
 .small-num {
     font-size: 25px;
     font-weight: 850;
-    color: white;
+    color: #2563EB !important;
 }
 
+.small-card div:not(.small-num) {
+    color: #475569 !important;
+}
+
+/* Native metric styling */
+[data-testid="stMetric"] {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    padding: 14px 16px;
+    border-radius: 14px;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+}
+
+[data-testid="stMetricLabel"] {
+    color: #475569 !important;
+}
+
+[data-testid="stMetricValue"] {
+    color: #0F172A !important;
+}
+
+/* Footer */
 .footer {
     margin-top: 28px;
     padding: 24px;
-    background: rgba(0, 45, 95, 0.6);
+    background: linear-gradient(90deg, #2563EB, #1D4ED8);
     border-radius: 16px;
     font-size: 20px;
     font-weight: 800;
-    color: #00D9FF;
+    color: white !important;
     text-align: center;
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.18);
 }
 
+/* Dataframe */
 [data-testid="stDataFrame"] {
     background-color: white;
+    border: 1px solid #CBD5E1;
     border-radius: 14px;
 }
+
+/* Buttons */
+.stButton > button,
+.stDownloadButton > button {
+    background: #2563EB;
+    color: white !important;
+    border-radius: 10px;
+    border: none;
+    font-weight: 700;
+}
+
+.stButton > button:hover,
+.stDownloadButton > button:hover {
+    background: #1D4ED8;
+    color: white !important;
+}
+
+/* Info, success and warning boxes */
+[data-testid="stAlert"] {
+    border-radius: 12px;
+}
+
+/* Horizontal rule */
+hr {
+    border-color: #CBD5E1 !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -227,7 +341,7 @@ else:
 st.sidebar.markdown("""
 <div class="sidebar-card">
     <div style="font-size:22px;font-weight:800;">SIDBI Dashboard</div>
-    <div style="font-size:12px;color:#B8C4D6;margin-top:6px;">MSME Analytics Platform</div>
+    <div style="font-size:12px;color:#64748B;margin-top:6px;">MSME Analytics Platform</div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -418,7 +532,7 @@ if page == "Home":
         st.markdown("""
         <div class="glass-panel">
             <div class="panel-title">📊 Dashboard Overview</div>
-            <p style="font-size:16px;line-height:1.8;color:#EAF2FF;">
+            <p style="font-size:16px;line-height:1.8;color:#334155;">
             This dashboard analyzes SIDBI credit trends, asset growth, profitability,
             MSME registrations, employment, GDP contribution, state-wise performance,
             sector-wise allocation and correlation insights.
