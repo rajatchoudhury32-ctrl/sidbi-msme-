@@ -850,13 +850,15 @@ elif page == "India Map":
         ["Credit Absorption", "MSME Registrations"]
     )
 
-    geojson_url = "https://raw.githubusercontent.com/plotly/datasets/master/india_states.geojson"
-    india_states = requests.get(geojson_url).json()
+    geojson_url = "https://raw.githubusercontent.com/geohacker/india/master/state/india.geojson"
+    response = requests.get(geojson_url)
+    response.raise_for_status()      # Shows error if URL is invalid
+    india_states = response.json()
 
     fig = px.choropleth(
         state_df,
         geojson=india_states,
-        featureidkey="properties.ST_NM",
+        featureidkey="properties.NAME_1",
         locations="State",
         color=metric,
         color_continuous_scale="YlGnBu",
