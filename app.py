@@ -3,6 +3,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+import requests
 
 st.set_page_config(
     page_title="SIDBI MSME Dashboard",
@@ -456,6 +457,60 @@ def selected_range_box(page_name):
         📌 Current Analysis: {page_name} &nbsp; | &nbsp; Selected Range: {start_year} – {end_year}
     </div>
     """, unsafe_allow_html=True)
+    # ---------------- INDIA GEOJSON LOADER ----------------
+@st.cache_data(show_spinner=False)
+def load_india_geojson():
+    """
+    Download and cache the India states GeoJSON.
+
+    A backup URL is included so that the map can still load
+    if the primary source is temporarily unavailable.
+    """
+
+    geojson_urls = [
+        (
+            "https://raw.githubusercontent.com/"
+            "geohacker/india/master/state/india_state.geojson"
+        ),
+        (
+            "https://gist.githubusercontent.com/"
+            "jbrobst/56c13bbbf9d97d187fea01ca62ea5112/raw/"
+            "e388c4cae20aa53cb5090210a42ebb9b765c0a36/"
+            "india_states.geojson"
+        )
+    ]
+
+    last_error = None
+
+    for url in geojson_urls:
+        try:
+            response = requests.get(
+                url,
+                timeout=90,
+                headers={
+                    "User-Agent": "Mozilla/5.0"
+                }
+            )
+
+            response.raise_for_status()
+
+            geojson_data = response.json()
+
+            if (
+                geojson_data.get("type") == "FeatureCollection"
+                and geojson_data.get("features")
+            ):
+                return geojson_data
+
+        except (
+            requests.exceptions.RequestException,
+            ValueError
+        ) as error:
+            last_error = error
+
+    raise RuntimeError(
+        f"India GeoJSON could not be loaded. Error: {last_error}"
+    )
 
 # ---------------- HOME ----------------
 if page == "Home":
@@ -781,15 +836,15 @@ elif page == "Sector-wise Analysis":
         )
         st.plotly_chart(chart_layout(fig), use_container_width=True)
 
+
 # ---------------- INDIA MAP ----------------
 elif page == "India Map":
 
     selected_range_box("India Map")
 
-    import requests
-
     st.markdown("## 🗺️ India State-wise MSME Credit Map")
 
+    # State and Union Territory values used for map visualisation
     state_df = pd.DataFrame({
         "State": [
             "Andhra Pradesh",
@@ -831,76 +886,279 @@ elif page == "India Map":
         ],
 
         "Credit Absorption": [
-            38, 12, 22, 25, 20, 10, 70, 28, 15,
-            24, 65, 32, 40, 98, 14, 11, 8, 9,
-            22, 30, 45, 6, 90, 36, 7, 85, 18,
-            42, 5, 9, 8, 34, 20, 3, 2, 12
+            38, 12, 22, 25, 20, 10,
+            70, 28, 15, 24, 65, 32,
+            40, 98, 14, 11, 8, 9,
+            22, 30, 45, 6, 90, 36,
+            7, 85, 18, 42, 5, 9,
+            8, 34, 20, 3, 2, 12
         ],
 
         "MSME Registrations": [
-            44, 10, 26, 30, 22, 12, 75, 34, 16,
-            28, 68, 39, 48, 120, 15, 12, 9, 10,
-            28, 35, 55, 7, 95, 42, 8, 105, 22,
-            50, 6, 10, 9, 40, 24, 4, 3, 15
+            44, 10, 26, 30, 22, 12,
+            75, 34, 16, 28, 68, 39,
+            48, 120, 15, 12, 9, 10,
+            28, 35, 55, 7, 95, 42,
+            8, 105, 22, 50, 6, 10,
+            9, 40, 24, 4, 3, 15
         ]
     })
 
     metric = st.selectbox(
         "Select Map Indicator",
-        ["Credit Absorption", "MSME Registrations"]
+        [
+            "Credit Absorption",
+            "MSME Registrations"
+        ],
+        key="india_map_metric"
     )
 
-    geojson_url = "https://raw.githubusercontent.com/geohacker/india/master/state/india.geojson"
-    response = requests.get(geojson_url)
-    response.raise_for_status()      # Shows error if URL is invalid
-    india_states = response.json()
+    # Load the GeoJSON safely
+    try:
+        with st.spinner("Loading India map..."):
+            india_states = load_india_geojson()
 
+    except Exception as error:
+        st.error(
+            "The India map boundaries could not be loaded. "
+            "Please check the internet connection and reboot the app."
+        )
+
+        with st.expander("Technical details"):
+            st.code(str(error))
+
+        st.stop()
+
+    # Detect the state-name property used by the GeoJSON
+    first_feature = india_states["features"][0]
+    property_names = first_feature.get("properties", {})
+
+    possible_name_keys = [
+        "NAME_1",
+        "ST_NM",
+        "State_Name",
+        "state_name",
+        "NAME",
+        "name"
+    ]
+
+    geojson_name_key = None
+
+    for key in possible_name_keys:
+        if key in property_names:
+            geojson_name_key = key
+            break
+
+    if geojson_name_key is None:
+        st.error(
+            "The GeoJSON loaded successfully, but its state-name "
+            "property could not be identified."
+        )
+        st.write("Available GeoJSON properties:", property_names)
+        st.stop()
+
+    # Read all state names available in the map file
+    geojson_state_names = {
+        feature.get("properties", {}).get(geojson_name_key)
+        for feature in india_states["features"]
+        if feature.get("properties", {}).get(geojson_name_key)
+    }
+
+    # Convert modern names to names used by some older GeoJSON files
+    state_aliases = {
+        "Andaman and Nicobar Islands": [
+            "Andaman and Nicobar",
+            "Andaman & Nicobar Island",
+            "Andaman & Nicobar Islands"
+        ],
+        "Dadra and Nagar Haveli and Daman and Diu": [
+            "Dadra and Nagar Haveli",
+            "Daman and Diu",
+            "Dadra & Nagar Haveli",
+            "Daman & Diu"
+        ],
+        "Delhi": [
+            "NCT of Delhi",
+            "National Capital Territory of Delhi"
+        ],
+        "Jammu and Kashmir": [
+            "Jammu & Kashmir"
+        ],
+        "Odisha": [
+            "Orissa"
+        ],
+        "Puducherry": [
+            "Pondicherry"
+        ],
+        "Uttarakhand": [
+            "Uttaranchal"
+        ],
+        "Telangana": [
+            "Telengana"
+        ]
+    }
+
+    def find_geojson_state_name(state_name):
+        """
+        Match dataframe state names with the names available
+        inside the downloaded GeoJSON.
+        """
+
+        if state_name in geojson_state_names:
+            return state_name
+
+        for alias in state_aliases.get(state_name, []):
+            if alias in geojson_state_names:
+                return alias
+
+        return state_name
+
+    state_df["Map State"] = state_df["State"].apply(
+        find_geojson_state_name
+    )
+
+    # Identify names that do not exist separately in an older map file
+    unmatched_states = state_df.loc[
+        ~state_df["Map State"].isin(geojson_state_names),
+        "State"
+    ].tolist()
+
+    # Create choropleth
     fig = px.choropleth(
         state_df,
         geojson=india_states,
-        featureidkey="properties.NAME_1",
-        locations="State",
+        featureidkey=f"properties.{geojson_name_key}",
+        locations="Map State",
         color=metric,
         color_continuous_scale="YlGnBu",
-        title=f"India State-wise {metric}",
         hover_name="State",
         hover_data={
+            "Map State": False,
             "Credit Absorption": True,
             "MSME Registrations": True
-        }
+        },
+        labels={
+            "Credit Absorption": "Credit Absorption Index",
+            "MSME Registrations": "MSME Registrations (Lakh)"
+        },
+        title=f"India State-wise {metric}"
     )
 
     fig.update_geos(
         fitbounds="locations",
         visible=False,
+        showcoastlines=True,
+        coastlinecolor="#64748B",
         showcountries=True,
-        countrycolor="black",
+        countrycolor="#334155",
         showsubunits=True,
-        subunitcolor="white",
+        subunitcolor="#FFFFFF",
         projection_type="mercator"
+    )
+
+    fig.update_traces(
+        marker_line_color="#FFFFFF",
+        marker_line_width=0.7
     )
 
     fig.update_layout(
         template="plotly_white",
+        height=720,
         paper_bgcolor="rgba(255,255,255,0.96)",
         plot_bgcolor="rgba(255,255,255,0.96)",
-        font=dict(color="#102A43", size=14),
-        title_font=dict(size=24, color="#0B1F3A"),
-        margin=dict(l=30, r=30, t=70, b=40),
+        font=dict(
+            color="#102A43",
+            size=14
+        ),
+        title=dict(
+            text=f"India State-wise {metric}",
+            font=dict(
+                size=24,
+                color="#0B1F3A"
+            ),
+            x=0.02,
+            xanchor="left"
+        ),
+        margin=dict(
+            l=10,
+            r=10,
+            t=75,
+            b=20
+        ),
         coloraxis_colorbar=dict(
-            title=dict(font=dict(color="#102A43")),
-            tickfont=dict(color="#102A43")
+            title=dict(
+                text=metric,
+                font=dict(color="#102A43")
+            ),
+            tickfont=dict(color="#102A43"),
+            thickness=18,
+            len=0.75
         )
     )
 
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(
+        fig,
+        use_container_width=True,
+        config={
+            "displayModeBar": True,
+            "displaylogo": False,
+            "scrollZoom": True,
+            "responsive": True
+        }
+    )
+
+    # Show coverage information
+    matched_count = len(state_df) - len(unmatched_states)
+
+    m1, m2, m3 = st.columns(3)
+
+    m1.metric(
+        "Dataset Coverage",
+        f"{len(state_df)} States/UTs"
+    )
+
+    m2.metric(
+        "Matched Map Regions",
+        matched_count
+    )
+
+    m3.metric(
+        "Selected Indicator",
+        metric
+    )
+
+    if unmatched_states:
+        st.warning(
+            "The downloaded boundary file uses an older administrative "
+            "structure. These regions may not appear as separate polygons: "
+            + ", ".join(unmatched_states)
+        )
+
+    with st.expander("View complete state-wise map data"):
+        display_df = state_df[
+            [
+                "State",
+                "Credit Absorption",
+                "MSME Registrations"
+            ]
+        ].sort_values(
+            by=metric,
+            ascending=False
+        )
+
+        st.dataframe(
+            display_df,
+            use_container_width=True,
+            hide_index=True
+        )
 
     insight_box(
         "🗺️ State-wise Map Insights",
         [
-            "Maharashtra, Tamil Nadu and Uttar Pradesh show the highest MSME activity.",
-            "Western and Southern states account for a significant share of MSME credit.",
-            "Digital formalisation and Udyam Registration have improved MSME visibility across India."
+            "Maharashtra records the highest credit absorption and MSME registrations in the visualised dataset.",
+            "Tamil Nadu and Uttar Pradesh also demonstrate strong MSME activity.",
+            "Western and Southern industrial states show comparatively high credit absorption.",
+            "The map provides data coverage for all 28 states and 8 Union Territories."
         ]
     )
 
