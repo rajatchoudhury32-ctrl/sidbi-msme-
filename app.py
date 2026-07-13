@@ -485,12 +485,15 @@ if page == "Home":
 
     with left:
         st.markdown("""
-        <div class="glass-panel">
-            <div class="panel-title">📊 Dashboard Overview</div>
-            <p style="font-size:16px;line-height:1.8;color:#EAF2FF;">
-            This dashboard analyzes SIDBI credit trends, asset growth, profitability,
-            MSME registrations, employment, GDP contribution, state-wise performance,
-            sector-wise allocation and correlation insights.
+<div class="glass-panel">
+    <div class="panel-title">📊 Dashboard Overview</div>
+    <p style="font-size:16px;line-height:1.8;color:#334155;">
+    This dashboard analyzes SIDBI credit trends, asset growth, profitability,
+    MSME registrations, employment, GDP contribution, state-wise performance,
+    sector-wise allocation and correlation insights.
+    </p>
+</div>
+""", unsafe_allow_html=True)
             </p>
             <br>
             <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:15px;">
