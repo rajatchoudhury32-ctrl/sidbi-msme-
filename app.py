@@ -9,31 +9,6 @@ st.set_page_config(
     page_icon="📊",
     layout="wide"
 )
-st.markdown("""
-<style>
-/* Hide Streamlit top toolbar */
-[data-testid="stToolbar"] {
-    display: none !important;
-}
-
-/* Hide deploy/share button area */
-[data-testid="stDecoration"] {
-    display: none !important;
-}
-
-/* Hide header */
-header {
-    visibility: hidden !important;
-    height: 0px !important;
-}
-
-/* Remove top padding after hiding header */
-.block-container {
-    padding-top: 1rem !important;
-}
-</style>
-""", unsafe_allow_html=True)
-
 # ---------------- CSS THEME ----------------
 st.markdown("""
 <style>
@@ -167,6 +142,15 @@ header {
     box-shadow: 0 8px 20px rgba(0,0,0,0.08);
 }
 
+.glass-panel p,
+.glass-panel div {
+    color: #334155;
+}
+
+.glass-panel .panel-title {
+    color: #0F172A;
+}
+
 .purple-panel {
     background: #FFFFFF;
     border: 1px solid #DDD6FE;
@@ -202,6 +186,10 @@ header {
     font-size: 25px;
     font-weight: 850;
     color: #2563EB;
+}
+
+.small-card div:not(.small-num) {
+    color: #475569;
 }
 
 /* Footer */
@@ -296,7 +284,7 @@ else:
 st.sidebar.markdown("""
 <div class="sidebar-card">
     <div style="font-size:22px;font-weight:800;">SIDBI Dashboard</div>
-    <div style="font-size:12px;color:#B8C4D6;margin-top:6px;">MSME Analytics Platform</div>
+    <div style="font-size:12px;color:#64748B;margin-top:6px;">MSME Analytics Platform</div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -485,22 +473,31 @@ if page == "Home":
 
     with left:
         st.markdown("""
-<div class="glass-panel">
-    <div class="panel-title">📊 Dashboard Overview</div>
-    <p style="font-size:16px;line-height:1.8;color:#1E293B;">
-    This dashboard analyzes SIDBI credit trends, asset growth, profitability,
-    MSME registrations, employment, GDP contribution, state-wise performance,
-    sector-wise allocation and correlation insights.
-    </p>
-</div>
-""", unsafe_allow_html=True)
+        <div class="glass-panel">
+            <div class="panel-title">📊 Dashboard Overview</div>
+            <p style="font-size:16px; line-height:1.8;">
+                This dashboard analyzes SIDBI credit trends, asset growth, profitability,
+                MSME registrations, employment, GDP contribution, state-wise performance,
+                sector-wise allocation and correlation insights.
             </p>
             <br>
-            <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:15px;">
-                <div class="small-card"><div class="small-num">16+</div><div>Indicators</div></div>
-                <div class="small-card"><div class="small-num">15</div><div>Years</div></div>
-                <div class="small-card"><div class="small-num">36</div><div>States/UTs</div></div>
-                <div class="small-card"><div class="small-num">3</div><div>Sectors</div></div>
+            <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:15px;">
+                <div class="small-card">
+                    <div class="small-num">16+</div>
+                    <div>Indicators</div>
+                </div>
+                <div class="small-card">
+                    <div class="small-num">15</div>
+                    <div>Years</div>
+                </div>
+                <div class="small-card">
+                    <div class="small-num">36</div>
+                    <div>States/UTs</div>
+                </div>
+                <div class="small-card">
+                    <div class="small-num">3</div>
+                    <div>Sectors</div>
+                </div>
             </div>
         </div>
         """, unsafe_allow_html=True)
